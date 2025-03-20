@@ -18,7 +18,7 @@
 ## 技術スタック
 
 - バックエンド: Go
-- フロントエンド: HTMX + Pongo2
+- フロントエンド: Pongo2
 - データベース: PostgreSQL
 - 認証: JWT
 
