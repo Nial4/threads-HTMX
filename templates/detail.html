@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ message.Title }} - スレッドボード{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-md rounded px-8 pt-6 pb-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold mb-2">{{ message.Title }}</h1>
+        <p class="text-gray-600 text-sm">投稿者: {{ message.Username }}</p>
+        <p class="text-gray-600 text-sm">投稿日時: {{ message.CreatedAt }}</p>
+        {% if message.UpdatedAt != message.CreatedAt %}
+            <p class="text-gray-600 text-sm">更新日時: {{ message.UpdatedAt }}</p>
+        {% endif %}
+    </div>
+
+    <div class="mb-6">
+        <p class="text-gray-800">{{ message.Content }}</p>
+    </div>
+
+    <div class="flex space-x-4">
+        <a href="/" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            一覧に戻る
+        </a>
+        {% if user_id == message.UserID %}
+            <a href="/messages/{{ message.ID }}/edit" 
+               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                編集
+            </a>
+            <button onclick="confirmDelete('{{ message.ID }}')"
+                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                削除
+            </button>
+            <form id="delete-form-{{ message.ID }}" 
+                  action="/messages/{{ message.ID }}/delete" 
+                  method="POST" 
+                  class="hidden">
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function confirmDelete(id) {
+        if (confirm('このメッセージを削除してもよろしいですか？')) {
+            document.getElementById('delete-form-' + id).submit();
+        }
+    }
+</script>
+{% endblock %} 

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}メッセージ編集 - {{ message.Title }}{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-md rounded px-8 pt-6 pb-8">
+    <h1 class="text-3xl font-bold mb-6">メッセージ編集</h1>
+
+    <form action="/messages/{{ message.ID }}" method="POST" class="space-y-6">
+        <input type="hidden" name="_method" value="PUT">
+        
+        <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
+                タイトル
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="title" name="title" type="text" value="{{ message.Title }}" maxlength="20" required>
+        </div>
+
+        <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
+                内容
+            </label>
+            <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="content" name="content" maxlength="20" required>{{ message.Content }}</textarea>
+        </div>
+
+        <div class="flex space-x-4">
+            <button type="submit" 
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                保存
+            </button>
+            <a href="/messages/{{ message.ID }}" 
+               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                キャンセル
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %} 

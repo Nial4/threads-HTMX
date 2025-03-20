@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}スレッドボード{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-lg mb-6">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="/" class="text-xl font-bold text-gray-800">スレッドボード</a>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <form action="/search" method="GET" class="flex">
+                        <input type="text" name="q" placeholder="メッセージを検索..." 
+                               class="px-4 py-2 border rounded-l focus:outline-none"
+                               value="{{ query|default:'' }}">
+                        <button type="submit" 
+                                class="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600">
+                            検索
+                        </button>
+                    </form>
+
+                    {% if user_id %}
+                        <span class="text-gray-600">ようこそ、{{ username }}</span>
+                        <form action="/logout" method="POST" class="inline">
+                            <button type="submit" 
+                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                ログアウト
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="/login" 
+                           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            ログイン
+                        </a>
+                        <a href="/register" 
+                           class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            新規登録
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        function confirmDelete(id) {
+            if (confirm('このメッセージを削除してもよろしいですか？')) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white shadow-md rounded px-8 pt-6 pb-8">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold">メッセージ一覧</h2>
+        <button onclick="showNewMessageModal()" 
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            新規メッセージ
+        </button>
+    </div>
+
+    {% if messages %}
+        <div class="space-y-4">
+            {% for message in messages %}
+                <div class="border-b pb-4">
+                    <h3 class="text-xl font-semibold">
+                        <a href="/messages/{{ message.ID }}" class="text-blue-600 hover:text-blue-800">
+                            {{ message.Title }}
+                        </a>
+                    </h3>
+                    <p class="text-gray-600 text-sm">{{ message.CreatedAt }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="mt-6 flex justify-center items-center space-x-4">
+            {% if has_prev %}
+                <a href="/?page={{ page-1 }}" 
+                   class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    前へ
+                </a>
+            {% else %}
+                <span class="bg-gray-300 text-gray-500 font-bold py-2 px-4 rounded cursor-not-allowed">
+                    前へ
+                </span>
+            {% endif %}
+
+            <span class="text-gray-600">
+                第 {{ page }} ページ / 合計 {{ total_pages }} ページ
+            </span>
+
+            {% if has_next %}
+                <a href="/?page={{ page+1 }}" 
+                   class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    次へ
+                </a>
+            {% else %}
+                <span class="bg-gray-300 text-gray-500 font-bold py-2 px-4 rounded cursor-not-allowed">
+                    次へ
+                </span>
+            {% endif %}
+        </div>
+    {% else %}
+        <p class="text-gray-600">メッセージはありません</p>
+    {% endif %}
+</div>
+
+<!-- 新留言浮窗 -->
+<div id="newMessageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">新規メッセージ</h3>
+            <button onclick="hideNewMessageModal()" class="text-gray-500 hover:text-gray-700">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        
+        <form action="/messages" method="POST">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
+                    タイトル
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="title" name="title" type="text" maxlength="20" required>
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
+                    内容
+                </label>
+                <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                          id="content" name="content" maxlength="20" required></textarea>
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button type="button" onclick="hideNewMessageModal()"
+                        class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    キャンセル
+                </button>
+                <button type="submit"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    投稿
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function showNewMessageModal() {
+        document.getElementById('newMessageModal').classList.remove('hidden');
+    }
+
+    function hideNewMessageModal() {
+        document.getElementById('newMessageModal').classList.add('hidden');
+    }
+
+    // 点击模态框外部时关闭
+    document.getElementById('newMessageModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideNewMessageModal();
+        }
+    });
+</script>
+{% endblock %} 

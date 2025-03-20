@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}新規登録 - スレッドボード{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <h2 class="text-2xl font-bold mb-6 text-center">新規ユーザー登録</h2>
+    
+    <form action="/register" method="POST">
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                ユーザー名
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="username" name="username" type="text" required>
+            <p class="text-gray-600 text-xs mt-1">ユーザー名は3-50文字の間で入力してください</p>
+        </div>
+        
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                パスワード
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                   id="password" name="password" type="password" required>
+            <p class="text-gray-600 text-xs mt-1">パスワードは6文字以上で入力してください</p>
+        </div>
+        
+        <div class="flex items-center justify-between">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="submit">
+                登録
+            </button>
+            <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+               href="/login">
+                すでにアカウントをお持ちの方はこちら
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %} 
