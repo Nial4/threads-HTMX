@@ -36,7 +36,7 @@ func setupTestDB(t *testing.T) (*sql.DB, func()) {
 		t.Fatalf("テストデータベースに接続できません: %v", err)
 	}
 
-	// 清理数据库
+	// テストデータベースの初期化
 	_, err = db.Exec(`
 		DROP TABLE IF EXISTS messages;
 		DROP TABLE IF EXISTS users;
@@ -72,19 +72,19 @@ func TestMessageStore_Create(t *testing.T) {
 
 	store := NewMessageStore(db)
 
-	// 创建测试用户
+	// テストユーザーの作成
 	_, err := db.Exec(`INSERT INTO users (username, password_hash) VALUES ($1, $2)`, "testuser", "testhash")
 	if err != nil {
 		t.Fatalf("テストユーザーの作成に失敗しました: %v", err)
 	}
 
-	// 测试创建消息
+	// メッセージの作成
 	err = store.Create("テストタイトル", "テスト内容", 1)
 	if err != nil {
 		t.Errorf("メッセージの作成に失敗しました: %v", err)
 	}
 
-	// 验证消息是否创建成功
+	// メッセージ数の確認
 	var count int
 	err = db.QueryRow("SELECT COUNT(*) FROM messages").Scan(&count)
 	if err != nil {
@@ -101,7 +101,7 @@ func TestMessageStore_Get(t *testing.T) {
 
 	store := NewMessageStore(db)
 
-	// 创建测试用户和消息
+	// テストユーザーとメッセージの作成
 	_, err := db.Exec(`
 		INSERT INTO users (id, username, password_hash) VALUES (1, 'testuser', 'testhash');
 		INSERT INTO messages (id, title, content, user_id) VALUES (1, 'テストタイトル', 'テスト内容', 1);
@@ -110,13 +110,13 @@ func TestMessageStore_Get(t *testing.T) {
 		t.Fatalf("テストデータの作成に失敗しました: %v", err)
 	}
 
-	// 测试获取消息
+	// メッセージの取得
 	msg, err := store.Get(1)
 	if err != nil {
 		t.Errorf("メッセージの取得に失敗しました: %v", err)
 	}
 
-	// 验证消息内容
+	// 結果の確認
 	if msg.Title != "テストタイトル" {
 		t.Errorf("タイトルが'テストタイトル'であるべきですが、実際は'%s'です", msg.Title)
 	}
@@ -134,7 +134,7 @@ func TestMessageStore_List(t *testing.T) {
 
 	store := NewMessageStore(db)
 
-	// 创建测试用户和多条消息
+	// テストユーザーとメッセージの作成
 	_, err := db.Exec(`
 		INSERT INTO users (id, username, password_hash) VALUES (1, 'testuser', 'testhash');
 		INSERT INTO messages (title, content, user_id) VALUES 
@@ -146,13 +146,13 @@ func TestMessageStore_List(t *testing.T) {
 		t.Fatalf("テストデータの作成に失敗しました: %v", err)
 	}
 
-	// 测试分页列表
+	// メッセージリストの取得
 	messages, total, err := store.List(1, 2)
 	if err != nil {
 		t.Errorf("メッセージリストの取得に失敗しました: %v", err)
 	}
 
-	// 验证结果
+	// 結果の確認
 	if total != 3 {
 		t.Errorf("総数が3であるべきですが、実際は%dです", total)
 	}
@@ -167,7 +167,7 @@ func TestMessageStore_Update(t *testing.T) {
 
 	store := NewMessageStore(db)
 
-	// 创建测试用户和消息
+	// テストユーザーとメッセージの作成
 	_, err := db.Exec(`
 		INSERT INTO users (id, username, password_hash) VALUES (1, 'testuser', 'testhash');
 		INSERT INTO messages (id, title, content, user_id) VALUES (1, '元のタイトル', '元の内容', 1);
@@ -176,13 +176,13 @@ func TestMessageStore_Update(t *testing.T) {
 		t.Fatalf("テストデータの作成に失敗しました: %v", err)
 	}
 
-	// 测试更新消息
+	// メッセージの更新
 	err = store.Update(1, "新タイトル", "新内容", 1)
 	if err != nil {
 		t.Errorf("メッセージの更新に失敗しました: %v", err)
 	}
 
-	// 验证更新结果
+	// 更新後のメッセージの取得
 	var title, content string
 	err = db.QueryRow("SELECT title, content FROM messages WHERE id = 1").Scan(&title, &content)
 	if err != nil {
@@ -202,7 +202,7 @@ func TestMessageStore_Delete(t *testing.T) {
 
 	store := NewMessageStore(db)
 
-	// 创建测试用户和消息
+	// テストユーザーとメッセージの作成
 	_, err := db.Exec(`
 		INSERT INTO users (id, username, password_hash) VALUES (1, 'testuser', 'testhash');
 		INSERT INTO messages (id, title, content, user_id) VALUES (1, 'テストタイトル', 'テスト内容', 1);
@@ -211,13 +211,13 @@ func TestMessageStore_Delete(t *testing.T) {
 		t.Fatalf("テストデータの作成に失敗しました: %v", err)
 	}
 
-	// 测试删除消息
+	// メッセージの削除
 	err = store.Delete(1, 1)
 	if err != nil {
 		t.Errorf("メッセージの削除に失敗しました: %v", err)
 	}
 
-	// 验证消息是否已删除
+	// メッセージの確認
 	var count int
 	err = db.QueryRow("SELECT COUNT(*) FROM messages WHERE id = 1").Scan(&count)
 	if err != nil {
@@ -234,7 +234,7 @@ func TestMessageStore_Search(t *testing.T) {
 
 	store := NewMessageStore(db)
 
-	// 创建测试用户和消息
+	// テストユーザーとメッセージの作成
 	_, err := db.Exec(`
 		INSERT INTO users (id, username, password_hash) VALUES (1, 'testuser', 'testhash');
 		INSERT INTO messages (title, content, user_id) VALUES 
@@ -246,13 +246,13 @@ func TestMessageStore_Search(t *testing.T) {
 		t.Fatalf("テストデータの作成に失敗しました: %v", err)
 	}
 
-	// 测试搜索消息
+	// メッセージの検索
 	messages, err := store.Search("ABC")
 	if err != nil {
 		t.Errorf("メッセージの検索に失敗しました: %v", err)
 	}
 
-	// 验证搜索结果
+	// 結果の確認
 	if len(messages) != 2 {
 		t.Errorf("検索結果の数が2であるべきですが、実際は%dです", len(messages))
 	}
